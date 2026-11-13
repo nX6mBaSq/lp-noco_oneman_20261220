@@ -92,10 +92,13 @@ html { scrollbar-gutter: stable; }
 /* ページ背景（グランジテクスチャ）：画面に固定し、スクロールしても動かない。
    background-attachment: fixed は iOS で効かないため、固定配置の疑似要素で敷く。
    幅はコンテンツ列（最大480px）に合わせ、PC表示でも両端のピンクが本文の脇に来るようにする。
-   KV・メニューは自前の背景で覆うので影響しない。 */
+   KV・メニューは自前の背景で覆うので影響しない。
+   高さは bottom: 0 ではなく最大ビューポート高（lvh）で固定する。モバイルでアドレスバーが
+   出入りするたびに高さが変わり、cover の背景が拡大・移動して見えるのを防ぐため。 */
 body::before,
 body::after {
-  content: ""; position: fixed; top: 0; bottom: 0; left: 50%; z-index: -1;
+  content: ""; position: fixed; top: 0; left: 50%; z-index: -1;
+  height: 100vh; height: 100lvh;
   width: 100%; max-width: 480px; transform: translateX(-50%);
   pointer-events: none;
 }
