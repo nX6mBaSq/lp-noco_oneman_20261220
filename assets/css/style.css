@@ -372,7 +372,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   width: 32px; height: auto;
   filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(240, 40, 127, .95));
 }
+/* タイトル下の区切り：基本は細いテーパードライン */
 .grad-rule { height: 1px; margin-top: var(--sp-5); background: linear-gradient(90deg, var(--pink), rgba(240, 40, 127, .35) 60%, transparent); }
+/* 山場（INFORMATION / TICKET）だけ有刺鉄線のあしらいにして、繰り返しで効き目が薄れるのを防ぐ。
+   素材：Materials/あしらい/2x/タイトル@2x.webp を #F0287F に着色・1440px に縮小し、
+   右へ消えるテーパード（100%→60%地点で35%→0%）を画像に焼き込み済み。
+   高さ 14px に抑え、比率を保ったまま左から敷く（右側はフェードで消えるので途切れは見えない） */
+.grad-rule--wire {
+  height: 14px;
+  background: url(../img/title-rule.webp) left center / auto 100% no-repeat;
+}
 
 /* =========================================================
    02. MESSAGE
