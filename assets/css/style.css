@@ -118,6 +118,10 @@ body::after {
   background: url(../img/bg-grunge.png) center / cover no-repeat;
   opacity: .8;
 }
+/* モバイル実機では明るく見えるため一段落とす */
+@media (max-width: 767px) {
+  body::after { opacity: .6; }
+}
 html.is-locked, html.is-locked body { overflow: hidden; }
 h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
@@ -352,7 +356,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .sec { position: relative; padding: var(--space-sec) var(--gutter); }
 /* KV以外の本文の基本組み */
 .sec, .footer { letter-spacing: var(--ls-body); }
-.sec p, .sec dd, .sec li, .footer p { text-wrap: pretty; }
 .sec h3, .sec-head__title { text-wrap: balance; }
 /* 見出し・ラベル・ボタンは約物を詰めて締める */
 .sec-head__sub, .sub-label, .info__row dd, .tcard__name, .tcard__bonus-title,
