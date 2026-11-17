@@ -3,7 +3,8 @@
    ========================================================= */
 :root {
   --bg: #000;
-  --bg-kv: #000;
+  --bg-kv: #10080e;
+  --kv-pink: #ff1685;
 
   --pink: #f0287f;          /* アクセント（文字・枠） */
   --cta: #d1166b;           /* 承認済み：CTA背景 */
@@ -92,7 +93,7 @@ html { scrollbar-gutter: stable; }
 /* ページ背景（グランジテクスチャ）：画面に固定し、スクロールしても動かない。
    background-attachment: fixed は iOS で効かないため、固定配置の疑似要素で敷く。
    幅はコンテンツ列（最大480px）に合わせ、PC表示でも両端のピンクが本文の脇に来るようにする。
-   KV・メニューは自前の背景で覆うので影響しない。
+   KV の下端は背景画像をフェードさせ、このテクスチャにつなげる。
    高さは bottom: 0 ではなく最大ビューポート高（lvh）で固定する。モバイルでアドレスバーが
    出入りするたびに高さが変わり、cover の背景が拡大・移動して見えるのを防ぐため。 */
 body::before,
@@ -173,37 +174,42 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   z-index: 100;
   height: var(--header-h);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 var(--gutter) 0 18px;
-  background: rgba(0, 0, 0, .9);
-  border-bottom: 1px solid rgba(240, 40, 127, .55);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  padding: 0 var(--gutter); /* 本文（.sec / .footer）と同じ左右余白 */
+  color: #fff4f8;
+  background: #130a11;
+  border-bottom: 1px solid #5b2242;
   transition: background-color .2s, border-color .2s;
 }
-.header__logo { display: block; width: 66px; }
-.header__logo img { width: 66px; height: auto; }
-.header__actions { display: flex; align-items: center; gap: 9px; }
+.header__logo {
+  display: flex; align-items: center; min-height: 44px;
+}
+.header__logo img { display: block; width: auto; height: 32px; }
+.header__actions { display: flex; align-items: center; gap: 12px; }
 .header__ticket {
-  height: 36px; padding: 0 14px;
-  font-family: var(--f-display); font-weight: 400; font-size: 15px; letter-spacing: .04em;
+  display: flex; align-items: center; min-height: 44px;
+  color: var(--kv-pink);
+  font: 600 13px/1 var(--f-cond);
+  letter-spacing: .1em;
 }
 .menu-btn {
   position: relative;
-  width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid rgba(214, 120, 180, .35);
-  background: var(--surface);
+  width: 44px; height: 44px;
+}
+.menu-btn::before {
+  content: "";
+  position: absolute; left: 5px; top: 10px; height: 24px;
+  border-left: 1px solid #58324a;
 }
 .menu-btn__bar {
-  position: absolute; left: 11px; width: 20px; height: 1.5px; background: #fff;
-  transition: transform .25s, opacity .2s;
+  position: absolute; right: 0; height: 1.5px; background: currentColor;
+  transition: transform .25s, width .25s;
 }
-.menu-btn__bar:nth-child(1) { top: 14px; }
-.menu-btn__bar:nth-child(2) { top: 21px; }
-.menu-btn__bar:nth-child(3) { top: 28px; }
-.is-menu-open .menu-btn__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 22px; left: 10px; }
-.is-menu-open .menu-btn__bar:nth-child(2) { opacity: 0; }
-.is-menu-open .menu-btn__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 22px; left: 10px; }
-.is-menu-open .header { background: transparent; border-bottom-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.menu-btn__bar:nth-child(1) { top: 17px; width: 21px; }
+.menu-btn__bar:nth-child(2) { top: 26px; width: 15px; }
+.is-menu-open .menu-btn::before { visibility: hidden; }
+.is-menu-open .menu-btn__bar:nth-child(1) { transform: translateY(4.5px) rotate(45deg); }
+.is-menu-open .menu-btn__bar:nth-child(2) { transform: translateY(-4.5px) rotate(-45deg); width: 21px; }
+.is-menu-open .header { background: transparent; border-bottom-color: transparent; }
 .is-menu-open .header__ticket { visibility: hidden; }
 
 /* =========================================================
@@ -214,33 +220,44 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   z-index: 90;
   display: flex; flex-direction: column;
   height: 100vh; height: 100dvh;
-  padding: calc(var(--header-h) + 52px) var(--gutter) calc(24px + env(safe-area-inset-bottom));
-  background:
-    radial-gradient(120% 60% at 90% 55%, rgba(120, 25, 80, .45), transparent 70%),
-    linear-gradient(180deg, #121017 0%, #1d1220 55%, #160f18 100%);
+  padding: calc(var(--header-h) + 24px) var(--gutter) calc(24px + env(safe-area-inset-bottom));
+  /* フッターと同じトーン：黒の半透明で背景テクスチャを透かす */
+  background: rgba(0, 0, 0, .85);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  font-size: var(--fs-sm); line-height: 1.8; color: #e6dbe6;
+  letter-spacing: var(--ls-body);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
 .menu[hidden] { display: none; }
 .menu.is-entering { animation: menu-in .22s ease-out; }
 @keyframes menu-in { from { opacity: 0; } to { opacity: 1; } }
-.menu__cross { position: absolute; right: 8px; top: 226px; width: 96px; height: 136px; color: rgba(240, 40, 127, .55); pointer-events: none; }
-.menu__heart { position: absolute; right: 10px; top: 384px; width: 62px; height: 86px; color: rgba(138, 21, 80, .7); pointer-events: none; }
-.menu__spark { position: absolute; color: rgba(255, 255, 255, .45); pointer-events: none; }
-.menu__spark--1 { right: 92px; top: 352px; width: 16px; height: 16px; }
-.menu__spark--2 { right: 68px; top: 438px; width: 20px; height: 20px; }
 .menu__nav, .menu__bottom { position: relative; }
-.menu__list li { border-bottom: 1px solid var(--line); }
+/* ナビ＋CTA/SNS をひとまとまりで上下中央に（auto マージンなので収まらない端末ではスクロール可） */
+.menu__nav { margin-top: auto; }
+/* ナビ：2列タイル。TICKET のみ全幅で強調 */
+.menu__list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .menu__list a {
-  display: flex; align-items: center; gap: 0;
-  height: 56px;
-  font-family: var(--f-display); font-size: 26px; letter-spacing: .02em; line-height: 1;
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  min-height: 76px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--surface);
+  font-family: var(--f-cond); font-weight: 500; font-size: 17px; letter-spacing: .08em; line-height: 1.2;
+  color: #fff;
+  transition: border-color .2s, color .2s;
 }
-.menu__num {
-  width: 24px; margin-right: 0; flex: none;
-  font-family: var(--f-display); font-size: 11px; color: var(--pink); letter-spacing: .02em;
+.menu__num { font-size: var(--fs-cap); line-height: 1; color: var(--pink); letter-spacing: .04em; }
+.menu__item--wide { grid-column: 1 / -1; }
+.menu__item--wide a {
+  flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px;
+  min-height: 60px;
+  border-color: var(--line-strong);
 }
-.menu__bottom { margin-top: auto; padding-top: 32px; display: flex; flex-direction: column; gap: 14px; }
+.menu__item--wide .menu__arrow { margin-left: auto; font-size: 14px; color: var(--pink); }
+@media (hover: hover) {
+  .menu__list a:hover { color: #ff86bd; border-color: var(--line-strong); }
+}
+.menu__bottom { margin-top: var(--sp-6); margin-bottom: auto; display: flex; flex-direction: column; gap: var(--sp-5); }
 
 /* =========================================================
    SNS アイコン（44px 円形）
@@ -262,93 +279,98 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    ========================================================= */
 .kv {
   position: relative;
-  height: calc(100vh - var(--header-h));
-  height: calc(100svh - var(--header-h));
-  min-height: 600px;
-  max-height: 880px;
-  overflow: hidden;
   isolation: isolate;
-  background:
-    radial-gradient(90% 50% at 30% 22%, rgba(60, 50, 60, .35), transparent 70%),
-    var(--bg-kv);
+  container-type: inline-size;
+  color: #fff4f8;
 }
-/* ピンクのグランジ枠（差し替え：kv-frame.png） */
-.kv__frame {
-  position: absolute; inset: -9px; z-index: 5;
-  border: 48px solid transparent;
-  border-image: url(../img/kv-frame.png) 96 round;
+.kv__artwork {
+  position: absolute; z-index: -1; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - clamp(56px, 16cqi, 80px)), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - clamp(56px, 16cqi, 80px)), transparent);
   pointer-events: none;
 }
-.kv__photo {
-  position: absolute; z-index: 0;
-  /* カンプ（375px）実測：幅378px・左0・上128px。幅はKVに追従させ、右端は枠の下に隠す */
-  left: var(--kv-photo-x, 0px); top: var(--kv-photo-y, 128px);
-  width: var(--kv-photo-w, 101%); max-width: none; height: auto;
-  /* 上端は写真の矩形の境目が見えないようにフェード */
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 72%, transparent 98%);
-  mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 72%, transparent 98%);
-}
-.kv__deco { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.kv__line { position: absolute; background: rgba(240, 40, 127, .55); height: 1px; transform-origin: left center; }
-.kv__line--1 { left: 0; top: 260px; width: 38px; }
-.kv__line--2 { left: 0; top: 350px; width: 26px; }
-.kv__line--3 { right: 0; top: 372px; width: 30px; }
+.kv__visual { position: relative; aspect-ratio: 480 / 601; }
+.kv__eyebrow, .kv__thp { position: absolute; top: 5%; }
 .kv__eyebrow {
-  position: absolute; z-index: 3; left: 29px; top: 21px;
-  font-family: var(--f-display); font-size: 12px; letter-spacing: .03em; line-height: 1.2;
+  left: 7.5%;
+  font: 600 clamp(11px, 2.9cqi, 14px)/1 var(--f-cond);
+  letter-spacing: .15em;
 }
-.kv__topright { position: absolute; z-index: 3; right: 30px; top: 21px; display: flex; flex-direction: column; align-items: flex-end; gap: 9px; }
-.kv__topdate { font-family: var(--f-display); font-size: 12px; letter-spacing: .03em; line-height: 1.2; }
-.kv__thp { width: 44px; height: auto; }
-.kv__title {
-  position: absolute; z-index: 2;
-  /* カンプ（375px）実測：幅316px・左18px・上12px */
-  left: var(--kv-title-x, 18px); top: var(--kv-title-y, 12px);
-  width: var(--kv-title-w, 316px);
-}
+.kv__thp { right: 7.5%; width: 10.6%; height: auto; }
+.kv__title { position: absolute; inset: auto 6.5% 1% auto; width: 87%; }
 .kv__title img { width: 100%; height: auto; }
-.kv__words {
-  position: absolute; z-index: 3; right: 19px;
-  top: 324px;
-  top: clamp(220px, calc(100svh - 488px), 324px); /* 812pxで324px。低い画面では情報ブロックに重ならないよう上げる */
-  padding: 6px 6px 6px 8px;
-  background: rgba(14, 10, 16, .88);
-  text-align: right;
-  font-family: var(--f-display); font-size: 9.5px; line-height: 12.6px; letter-spacing: .03em;
-}
 .kv__info {
-  position: absolute; z-index: 4; left: 0; right: 0; bottom: 0;
-  padding: 44px 30px 18px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .92) 28%, var(--bg-kv) 50%);
+  position: relative;
+  margin-inline: 5%;
+  padding: 3.5cqi 0 5cqi;
+  border-top: 1px solid #79405d;
 }
-.kv__rule {
-  position: relative; height: 1px; margin: 0 70px 18px -22px;
-  background: linear-gradient(90deg, rgba(240, 40, 127, .7), rgba(240, 40, 127, .35) 70%, transparent);
-}
-.plus { position: absolute; top: -8px; width: 16px; height: 16px; }
-.plus::before, .plus::after { content: ""; position: absolute; background: rgba(240, 40, 127, .7); }
-.plus::before { left: 7.5px; top: 0; width: 1px; height: 16px; }
-.plus::after { top: 7.5px; left: 0; height: 1px; width: 16px; }
-.plus:nth-child(1) { left: 0; }
-.plus:nth-child(2) { left: 22px; }
 .kv__spark {
-  position: absolute; right: 44px; top: 82px; width: 20px; height: 20px; color: #fff;
-  filter: drop-shadow(0 0 6px rgba(240, 40, 127, .9));
+  position: absolute; right: -5px; top: -6px;
+  width: 10px; height: 10px; color: var(--kv-pink);
 }
-.kv__date { display: flex; align-items: baseline; gap: 8px; color: var(--pink); }
-.kv__date-num { font-family: var(--f-display); font-size: 42px; line-height: 1; letter-spacing: -.01em; }
-.kv__date-day { font-family: var(--f-display); font-size: 20px; line-height: 1; letter-spacing: .02em; }
-.kv__time, .kv__venue { font-family: var(--f-display); font-size: 18px; line-height: 1.5; letter-spacing: .02em; }
-.kv__time { margin-top: 8px; }
-.kv__cta { margin-top: 12px; }
-.kv__bottomline {
-  position: relative; height: 16px; margin: 6px -28px 0;
+.kv__date { display: flex; align-items: center; justify-content: space-between; gap: 2cqi; }
+.kv__date-num {
+  font: 400 min(13.1cqi, 63px)/1 var(--f-display);
+  letter-spacing: -.02em;
+  white-space: nowrap;
 }
-.kv__bottomline::before {
-  content: ""; position: absolute; left: 4px; right: 4px; top: 7.5px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(240, 40, 127, .75) 15%, rgba(240, 40, 127, .75) 85%, transparent);
+.kv__date-day {
+  flex: 0 0 21%;
+  padding: 2.05cqi 0;
+  background: var(--kv-pink);
+  color: var(--bg-kv);
+  clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%);
+  font: 600 clamp(12px, 3.5cqi, 17px)/1 var(--f-cond);
+  letter-spacing: .04em;
+  text-align: center;
 }
-.kv__bottomline svg { position: relative; margin: 0 auto; width: 16px; height: 16px; color: var(--pink); }
+.kv__time {
+  margin-top: 3cqi;
+  color: #d0b9c4;
+  font: 500 clamp(11px, 2.92cqi, 14px)/1.3 var(--f-cond);
+  letter-spacing: .09em;
+}
+.kv__venue {
+  margin-top: 1.1cqi;
+  font: 400 clamp(16px, 4.58cqi, 22px)/1.2 var(--f-display);
+  letter-spacing: .05em;
+}
+.kv__cta {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1fr 15%;
+  align-items: center;
+  min-height: max(44px, 11.875cqi);
+  margin-top: 3.3cqi;
+  color: var(--bg-kv);
+  font-size: clamp(13px, 3.33cqi, 16px);
+  font-weight: 900;
+}
+.kv__cta::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(circle at 85% 0, transparent 5px, var(--kv-pink) 5.5px) top / 100% 51% no-repeat,
+    radial-gradient(circle at 85% 100%, transparent 5px, var(--kv-pink) 5.5px) bottom / 100% 51% no-repeat;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+}
+.kv__cta > span:first-child { padding-left: 4.2cqi; }
+.kv__cta-stub {
+  display: grid; place-items: center;
+  align-self: stretch; margin-block: 8px;
+  border-left: 1px dashed #741345;
+  font: 26px/1 Arial, sans-serif;
+}
+@media (hover: hover) {
+  .header__ticket:hover { color: #ff8dbf; }
+  .kv__cta:hover::before { filter: brightness(1.12); }
+}
+.kv__cta:active::before { filter: brightness(.85); }
 
 /* =========================================================
    共通セクション
@@ -422,10 +444,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .info__row dt { font-size: var(--fs-sm); font-weight: 500; letter-spacing: var(--ls-label); color: var(--muted-2); }
 .info__row dd { font-size: var(--fs-body); font-weight: 700; line-height: 1.6; letter-spacing: .05em; }
+/* 会場：会場名はテキストのまま、続く「→ ACCESS」だけをページ内リンクに */
 .info__link {
-  display: inline-block; padding-bottom: 2px;
-  border-bottom: 1.5px solid var(--pink);
-  min-height: 24px;
+  /* 見た目は元の下線、タップ領域は 44px 確保（上下のはみ出しは負マージンで行の高さに影響させない） */
+  display: inline-flex; align-items: center; min-height: 44px; margin-block: -11px;
+  margin-left: .3em;
+}
+.info__link-arrow { margin-right: .3em; }
+/* 下線は「ACCESS」の文字だけに */
+.info__link-text {
+  text-decoration: underline; text-decoration-color: var(--pink);
+  text-decoration-thickness: 1.5px; text-underline-offset: 5px;
+}
+@media (hover: hover) {
+  .info__link:hover { color: #ff86bd; }
 }
 .info__note { display: block; margin-top: 3px; font-size: var(--fs-sm); font-weight: 500; color: var(--muted); }
 
@@ -433,23 +465,95 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    04. TICKET ★
    ========================================================= */
 /* チケットカード（Design/ticket-mobile.png） */
+/* KV の CTA と同じ「チケット券」モチーフ：右上・左下の斜め切り欠き＋ミシン目＋半円の切り欠き。
+   枠線は ::before（枠色の形）の上に ::after（地色の形）を 1px 内側に重ねて表現する */
 .tcard {
-  position: relative; padding: var(--sp-4) 20px 20px;
-  background: var(--card);
-  border: 1px solid rgba(255, 255, 255, .18);
-  border-radius: 20px;
+  --c: 12px;                       /* 斜め切り欠き */
+  --ci: calc(var(--c) - .6px);     /* 内側の切り欠き（斜辺の線幅を 1px に揃える補正） */
+  --r: 8px;                        /* ミシン目両端の半円 */
+  --bd: rgba(255, 255, 255, .18);  /* 枠色 */
+  --perf: rgba(255, 255, 255, .25);/* ミシン目の色 */
+  position: relative;
 }
-.tcard--vip { margin-top: var(--space-label); border-color: #ec5c9c; }
+.tcard--vip { --bd: #ec5c9c; --perf: rgba(236, 92, 156, .6); margin-top: var(--space-label); }
 .tcard--general { margin-top: var(--sp-3); }
+.tcard__seg { position: relative; isolation: isolate; }
+.tcard__seg::before,
+.tcard__seg::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
+.tcard__seg::before { inset: 0; background: var(--bd); }
+.tcard__seg::after { background: var(--card); }
+
+/* 単体（一般）：右上・左下を切り欠き */
+.tcard__seg--solo { padding: var(--sp-4) 20px; }
+.tcard__seg--solo::before {
+  clip-path: polygon(0 0, calc(100% - var(--c)) 0, 100% var(--c), 100% 100%, var(--c) 100%, 0 calc(100% - var(--c)));
+}
+.tcard__seg--solo::after {
+  inset: 1px;
+  clip-path: polygon(0 0, calc(100% - var(--ci)) 0, 100% var(--ci), 100% 100%, var(--ci) 100%, 0 calc(100% - var(--ci)));
+}
+
+/* 上半分（VIP 見出し）：右上を切り欠き、下端の両側に半円＋ミシン目 */
+.tcard__seg--top { padding: var(--sp-4) 20px var(--sp-4); }
+.tcard__seg--top::before {
+  clip-path: polygon(0 0, calc(100% - var(--c)) 0, 100% var(--c), 100% 100%, 0 100%);
+  -webkit-mask:
+    radial-gradient(circle at 0 100%, transparent var(--r), #000 calc(var(--r) + .5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 100%, transparent var(--r), #000 calc(var(--r) + .5px)) right / 51% 100% no-repeat;
+          mask:
+    radial-gradient(circle at 0 100%, transparent var(--r), #000 calc(var(--r) + .5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 100%, transparent var(--r), #000 calc(var(--r) + .5px)) right / 51% 100% no-repeat;
+}
+.tcard__seg--top::after {
+  inset: 1px 1px 0 1px;
+  background:
+    repeating-linear-gradient(90deg, var(--perf) 0 6px, transparent 6px 11px) left calc(var(--r) + 8px) bottom / calc(100% - 2 * (var(--r) + 8px)) 1px no-repeat,
+    var(--card);
+  clip-path: polygon(0 0, calc(100% - var(--ci)) 0, 100% var(--ci), 100% 100%, 0 100%);
+  -webkit-mask:
+    radial-gradient(circle at -1px 100%, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at calc(100% + 1px) 100%, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) right / 51% 100% no-repeat;
+          mask:
+    radial-gradient(circle at -1px 100%, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at calc(100% + 1px) 100%, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) right / 51% 100% no-repeat;
+}
+
+/* 下半分（VIP 特典）：上端の両側に半円、左下を切り欠き */
+.tcard__seg--bottom { padding: var(--sp-4) 20px 20px; }
+.tcard__seg--bottom::before {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--c) 100%, 0 calc(100% - var(--c)));
+  -webkit-mask:
+    radial-gradient(circle at 0 0, transparent var(--r), #000 calc(var(--r) + .5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 0, transparent var(--r), #000 calc(var(--r) + .5px)) right / 51% 100% no-repeat;
+          mask:
+    radial-gradient(circle at 0 0, transparent var(--r), #000 calc(var(--r) + .5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 0, transparent var(--r), #000 calc(var(--r) + .5px)) right / 51% 100% no-repeat;
+}
+.tcard__seg--bottom::after {
+  inset: 0 1px 1px 1px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--ci) 100%, 0 calc(100% - var(--ci)));
+  -webkit-mask:
+    radial-gradient(circle at -1px 0, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at calc(100% + 1px) 0, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) right / 51% 100% no-repeat;
+          mask:
+    radial-gradient(circle at -1px 0, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at calc(100% + 1px) 0, transparent calc(var(--r) + 1px), #000 calc(var(--r) + 1.5px)) right / 51% 100% no-repeat;
+}
+
 .tcard__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+/* 一般：価格の左に縦ミシン目（KV の CTA の半券と同じ構成） */
+.tcard--general .tcard__price {
+  align-self: stretch; display: flex; align-items: center;
+  margin-block: calc(-1 * var(--sp-2)); padding-left: 20px;
+  border-left: 1px dashed var(--perf);
+}
 .tcard__name { font-family: var(--f-jp); font-weight: 900; font-size: 18px; line-height: 1.3; letter-spacing: .06em; }
 .tcard__price { font-family: var(--f-display); font-size: 34px; line-height: 1.15; letter-spacing: .01em; }
 /* ¥ は数字より一段小さく、ベースラインで揃える */
 .tcard__price .yen { margin-right: 2px; font-size: .62em; letter-spacing: 0; }
 .tcard--vip .tcard__price { color: #ff86bd; }
-.tcard--vip .tcard__head { padding-bottom: var(--sp-3); border-bottom: 1px solid rgba(255, 255, 255, .14); }
 .check { color: #ff6fae; font-weight: 900; font-size: 15px; }
-.tcard__bonus-title { margin-top: var(--sp-4); font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--ls-label); color: #ff86bd; }
+.tcard__bonus-title { margin-top: 0; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--ls-label); color: #ff86bd; }
 .tcard__bonus { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-2); }
 .tcard__bonus li {
   display: flex; align-items: baseline; gap: 8px;
@@ -548,15 +652,21 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   box-shadow: var(--media-shadow);
 }
 .map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.access__route { margin-top: var(--sp-4); font-size: var(--fs-body); line-height: 1.75; }
+/* 住所の補足として続けて読ませるため、住所との間は詰める */
+.access__route { margin-top: var(--sp-1); font-size: var(--fs-body); line-height: 1.75; }
 .access__route-title { font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--ls-label); color: #ff86bd; }
 .access__site {
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 24px; margin-top: var(--sp-3);
-  font-size: var(--fs-note); color: var(--muted);
-  text-decoration: underline; text-underline-offset: 3px;
+  font-size: var(--fs-note); color: var(--text);
+  /* INFORMATION の「→ ACCESS」リンクと同じ見せ方（白文字＋ピンク下線） */
+  text-decoration: underline; text-decoration-color: var(--pink);
+  text-decoration-thickness: 1.5px; text-underline-offset: 5px;
 }
 .access__site i { font-size: 11px; }
+@media (hover: hover) {
+  .access__site:hover { color: #ff86bd; }
+}
 
 /* =========================================================
    07. NOTICE / FAQ

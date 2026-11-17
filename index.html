@@ -28,34 +28,28 @@
 <!-- ===== SVG sprite（装飾・アイコン） ===== -->
 <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
   <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 0C12.9 7.6 16.4 11.1 24 12 16.4 12.9 12.9 16.4 12 24 11.1 16.4 7.6 12.9 0 12 7.6 11.1 11.1 7.6 12 0Z" fill="currentColor"/></symbol>
-  <symbol id="i-cross" viewBox="0 0 120 170"><path d="M50 1h20v60h48v20H70v88H50V81H2V61h48z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M60 0v170M0 71h120" stroke="currentColor" stroke-width=".6" opacity=".7"/></symbol>
-  <symbol id="i-heart" viewBox="0 0 80 110"><path d="M40 72C30 62 0 46 0 22 0 9 10 0 21 0c9 0 15 5 19 12 4-7 10-12 19-12 11 0 21 9 21 22 0 18-17 32-30 44-2 2-3 6-3 10v14c0 3-2 5-4 5s-3-2-3-5V76z" fill="currentColor"/><path d="M45 96c0 0 5 7 5 10a5 5 0 0 1-10 0c0-3 5-10 5-10z" fill="currentColor"/></symbol>
 </svg>
 
 <!-- ===== H. 固定ヘッダー ===== -->
 <header class="header" id="header">
   <a class="header__logo" href="#top" aria-label="NOCO ONEMAN LIVE「I am」トップへ">
-    <img src="assets/img/logo-iam.png" alt="I am" width="360" height="198">
+    <img src="assets/img/logo-iam.png" alt="" width="360" height="178">
   </a>
   <div class="header__actions">
-    <a class="btn-cta header__ticket" href="#ticket">TICKET</a>
+    <a class="header__ticket" href="#ticket">TICKET</a>
     <button class="menu-btn" id="menuBtn" type="button" aria-controls="menu" aria-expanded="false" aria-label="メニューを開く">
-      <span class="menu-btn__bar"></span><span class="menu-btn__bar"></span><span class="menu-btn__bar"></span>
+      <span class="menu-btn__bar" aria-hidden="true"></span><span class="menu-btn__bar" aria-hidden="true"></span>
     </button>
   </div>
 </header>
 
 <!-- ===== 状態B：メニュー ===== -->
 <div class="menu" id="menu" hidden>
-  <svg class="menu__cross" aria-hidden="true"><use href="#i-cross"/></svg>
-  <svg class="menu__heart" aria-hidden="true"><use href="#i-heart"/></svg>
-  <svg class="menu__spark menu__spark--1" aria-hidden="true"><use href="#i-sparkle"/></svg>
-  <svg class="menu__spark menu__spark--2" aria-hidden="true"><use href="#i-sparkle"/></svg>
   <nav class="menu__nav" aria-label="ページ内メニュー">
     <ol class="menu__list">
       <li><a href="#message"><span class="menu__num">02</span>MESSAGE</a></li>
       <li><a href="#information"><span class="menu__num">03</span>INFORMATION</a></li>
-      <li><a href="#ticket"><span class="menu__num">04</span>TICKET</a></li>
+      <li class="menu__item--wide"><a href="#ticket"><span class="menu__num">04</span>TICKET<i class="fa-solid fa-arrow-right menu__arrow" aria-hidden="true"></i></a></li>
       <li><a href="#profile"><span class="menu__num">05</span>PROFILE</a></li>
       <li><a href="#access"><span class="menu__num">06</span>ACCESS</a></li>
       <li><a href="#faq"><span class="menu__num">07</span>NOTICE / FAQ</a></li>
@@ -78,33 +72,23 @@
 
   <!-- ===== 01. KV ===== -->
   <section class="kv" id="kv" aria-label="NOCO ONEMAN LIVE「I am」">
-    <div class="kv__frame" aria-hidden="true"></div>
-    <!-- 差し替え：人物（切り抜き） -->
-    <img class="kv__photo" src="assets/img/kv-noco.jpg" alt="" width="1015" height="870" fetchpriority="high">
-    <div class="kv__deco" aria-hidden="true">
-      <span class="kv__line kv__line--1"></span><span class="kv__line kv__line--2"></span><span class="kv__line kv__line--3"></span>
-    </div>
-    <p class="kv__eyebrow">NOCO ONEMAN LIVE</p>
-    <div class="kv__topright">
-      <p class="kv__topdate">2026.12.20 SUN</p>
-      <!-- 差し替え：主催ロゴ（THP） -->
+    <img class="kv__artwork" src="assets/img/kv-grunge.webp" alt="" width="960" height="1678" fetchpriority="high">
+    <div class="kv__visual">
+      <p class="kv__eyebrow">NOCO ONEMAN LIVE</p>
       <img class="kv__thp" src="assets/img/logo-thp.png" alt="THP" width="280" height="76">
+      <h1 class="kv__title">
+        <img src="assets/img/logo-iam.png" alt="NOCO ONEMAN LIVE「I am」" width="360" height="178">
+      </h1>
     </div>
-    <h1 class="kv__title">
-      <!-- 差し替え：タイトルロゴ -->
-      <img src="assets/img/kv-title.png" alt="I am" width="1020" height="552" fetchpriority="high">
-    </h1>
-    <ul class="kv__words" aria-hidden="true">
-      <li>STRONG</li><li>WEAK</li><li>CUTE</li><li>CRAZY</li><li>REAL</li><li>NOCO</li>
-    </ul>
     <div class="kv__info">
-      <div class="kv__rule" aria-hidden="true"><span class="plus"></span><span class="plus"></span></div>
       <svg class="kv__spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
-      <p class="kv__date"><span class="kv__date-num">2026.12.20</span><span class="kv__date-day">SUN</span></p>
+      <p class="kv__date"><time class="kv__date-num" datetime="2026-12-20">2026.12.20</time><span class="kv__date-day">SUN</span></p>
       <p class="kv__time">17:30 OPEN / 18:00 START</p>
       <p class="kv__venue">PLUSWIN HALL OSAKA</p>
-      <a class="btn-cta btn-cta--52 kv__cta" href="#ticket">チケット購入はこちら<span class="arrow" aria-hidden="true">↓</span></a>
-      <div class="kv__bottomline" aria-hidden="true"><svg><use href="#i-sparkle"/></svg></div>
+      <a class="kv__cta" href="#ticket">
+        <span>チケット購入はこちら</span>
+        <span class="kv__cta-stub" aria-hidden="true">⟶</span>
+      </a>
     </div>
   </section>
 
@@ -129,7 +113,7 @@
       <div class="info__row"><dt>公演名</dt><dd>NOCO ONEMAN LIVE「I am」</dd></div>
       <div class="info__row"><dt>日程</dt><dd>2026年12月20日（日）</dd></div>
       <div class="info__row"><dt>時間</dt><dd>17:30 OPEN / 18:00 START</dd></div>
-      <div class="info__row"><dt>会場</dt><dd><a class="info__link" href="#access">PLUSWIN HALL OSAKA → ACCESS</a></dd></div>
+      <div class="info__row"><dt>会場</dt><dd>PLUSWIN HALL OSAKA <a class="info__link" href="#access"><span class="info__link-arrow" aria-hidden="true">→</span><span class="info__link-text">ACCESS</span><span class="visually-hidden">（会場へのアクセスを見る）</span></a></dd></div>
       <div class="info__row"><dt>料金</dt><dd>VIP ¥10,000 / 一般 ¥4,000</dd></div>
     </dl>
   </section>
@@ -145,20 +129,22 @@
 
     <p class="sub-label ticket__label--type">チケットの種類</p>
     <article class="tcard tcard--vip" aria-label="VIPチケット">
-      <div class="tcard__head">
+      <div class="tcard__head tcard__seg tcard__seg--top">
         <h3 class="tcard__name">VIP</h3>
         <p class="tcard__price"><span class="yen">¥</span>10,000</p>
       </div>
+      <div class="tcard__body tcard__seg tcard__seg--bottom">
       <p class="tcard__bonus-title">VIP特典</p>
       <ul class="tcard__bonus">
         <li><span class="check" aria-hidden="true">✓</span>前方エリア確約</li>
         <li><span class="check" aria-hidden="true">✓</span>VIP限定オリジナルグッズ（ステッカー＆ラミネートパス）</li>
         <li><span class="check" aria-hidden="true">✓</span>終演後お見送り会への参加</li>
       </ul>
+      </div>
     </article>
 
     <article class="tcard tcard--general" aria-label="一般チケット">
-      <div class="tcard__head">
+      <div class="tcard__head tcard__seg tcard__seg--solo">
         <h3 class="tcard__name">一般</h3>
         <p class="tcard__price"><span class="yen">¥</span>4,000</p>
       </div>
@@ -229,7 +215,7 @@
       <p class="access__address"><span class="access__zip">〒542-0084</span><br>大阪府大阪市中央区宗右衛門町2-3 地下1階</p>
       <div class="access__route">
         <!-- <p class="access__route-title">最寄り駅から</p> -->
-        <p>・地下鉄「日本橋駅」2番出口より徒歩約2分</p>
+        <p>地下鉄「日本橋駅」2番出口より徒歩約2分</p>
         <!-- <p>・地下鉄「日本橋駅」2番出口より徒歩約2分（堺筋近く）<br>・南海線・近鉄線・御堂筋線「なんば駅」より徒歩8分</p> -->
       </div>
       <a class="access__site" href="https://www.pluswin.net/osaka" target="_blank" rel="noopener">会場公式サイト<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i><span class="visually-hidden">（外部サイト）</span></a>
@@ -292,7 +278,7 @@
 
 <!-- ===== F. フッター ===== -->
 <footer class="footer">
-  <img class="footer__logo" src="assets/img/logo-iam.png" alt="I am" width="360" height="198" loading="lazy">
+  <img class="footer__logo" src="assets/img/logo-iam.png" alt="I am" width="360" height="178" loading="lazy">
 
   <nav class="footer__nav" aria-label="フッターメニュー">
     <ol class="footer__list">
