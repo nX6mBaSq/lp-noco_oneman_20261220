@@ -774,6 +774,93 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .toast.is-show { opacity: 1; transform: translate(-50%, 0); }
 
+/* =========================================================
+   PC 対応（モバイルファースト）
+   中央の 480px 列はモバイルデザインのまま使い、
+   768px〜：背景テクスチャを画面全幅に広げ、列に枠と暗幕をつけて浮かせる
+   1024px〜：列の左右に固定パネル（左：公演情報／右：ナビ・CTA・SNS）
+   ========================================================= */
+.pc-side { display: none; }
+
+@media (min-width: 768px) {
+  body::before, body::after { max-width: none; }
+  /* 中央列の暗幕＋左右の細い枠（テクスチャの上・本文の下に敷く） */
+  html::after {
+    content: ""; position: fixed; top: 0; left: 50%; z-index: -1;
+    width: 480px; height: 100vh; height: 100lvh; transform: translateX(-50%);
+    background: rgba(0, 0, 0, .45);
+    border-inline: 1px solid var(--line);
+    box-shadow: 0 0 60px rgba(0, 0, 0, .6), 0 0 120px rgba(240, 40, 127, .08);
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pc-side {
+    position: fixed; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    width: calc(50% - 240px); height: 100vh; height: 100dvh;
+    padding: var(--sp-6) clamp(24px, 3vw, 56px);
+    overflow-y: auto;
+  }
+  .pc-side--left { left: 0; }
+  .pc-side--right { right: 0; }
+  .pc-side__inner { width: 100%; max-width: 320px; margin-block: auto; }
+
+  /* --- 左：公演情報 --- */
+  .pc-side--left { color: #fff4f8; }
+  .pc-info__eyebrow { font: 600 13px/1 var(--f-cond); letter-spacing: .2em; color: #d0b9c4; }
+  .pc-info__logo {
+    width: 100%; height: auto; margin-top: var(--sp-4);
+    filter: drop-shadow(0 0 24px rgba(240, 40, 127, .35));
+  }
+  .pc-info__rule { position: relative; height: 1px; margin-top: var(--sp-5); background: #79405d; }
+  .pc-info__spark { position: absolute; right: -5px; top: -5px; width: 10px; height: 10px; color: var(--kv-pink); }
+  .pc-info__date { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: var(--sp-4); }
+  .pc-info__date-num { font: 400 clamp(34px, 3.4vw, 54px)/1 var(--f-display); letter-spacing: -.02em; white-space: nowrap; }
+  .pc-info__date-day {
+    flex: none; padding: 6px 12px;
+    background: var(--kv-pink); color: var(--bg-kv);
+    clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%);
+    font: 600 15px/1 var(--f-cond); letter-spacing: .04em;
+  }
+  .pc-info__time { margin-top: var(--sp-3); font: 500 14px/1.3 var(--f-cond); letter-spacing: .09em; color: #d0b9c4; }
+  .pc-info__venue { margin-top: var(--sp-1); font: 400 clamp(18px, 1.6vw, 24px)/1.2 var(--f-display); letter-spacing: .05em; }
+  .pc-info__thp { width: 64px; height: auto; margin-top: var(--sp-6); opacity: .85; }
+
+  /* --- 右：ナビ・CTA・SNS --- */
+  .pc-nav { border-top: 1px solid var(--line); }
+  .pc-nav li { border-bottom: 1px solid var(--line); }
+  .pc-nav a {
+    position: relative;
+    display: flex; align-items: center; min-height: 48px;
+    font-family: var(--f-cond); font-weight: 500; font-size: 15px; letter-spacing: .1em; line-height: 1.2;
+    color: #fff;
+    transition: color .2s, padding-left .2s;
+  }
+  .pc-nav__num { width: 32px; flex: none; font-size: var(--fs-cap); color: var(--pink); letter-spacing: .04em; }
+  /* 表示中のセクション：ピンク＋右にハート */
+  .pc-nav a.is-current { color: #ff86bd; padding-left: 6px; }
+  .pc-nav a.is-current::after {
+    content: "\f004"; margin-left: auto;
+    font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 10px; color: var(--pink);
+  }
+  .pc-nav a:hover { color: #ff86bd; padding-left: 6px; }
+  .pc-side__cta { margin-top: var(--sp-6); }
+  .pc-side__sns { margin-top: var(--sp-5); }
+  .pc-side__sns .sns__btn:hover { background: var(--magenta); }
+  .pc-side__tag {
+    margin-top: var(--sp-5); text-align: center;
+    font: 400 22px/1.2 var(--f-display); letter-spacing: .02em; color: #f24a96;
+  }
+
+  /* PC では右パネルにナビがあるため、ヘッダーのメニューボタンは不要 */
+  .menu-btn, .header__actions .header__ticket { display: none; }
+
+  /* マウス操作向けのホバー（共通ボタン） */
+  .sns__btn:hover, .btn-share:hover, .footer__top:hover { background: var(--magenta); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

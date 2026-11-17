@@ -313,6 +313,44 @@
   </div>
 </footer>
 
+<!-- ===== PC（1024px以上）：中央のモバイル列の左右に固定パネル。モバイルでは非表示 ===== -->
+<!-- 左：公演情報（KVの要約。装飾扱い） -->
+<aside class="pc-side pc-side--left" aria-hidden="true">
+  <div class="pc-side__inner">
+    <p class="pc-info__eyebrow">NOCO ONEMAN LIVE</p>
+    <img class="pc-info__logo" src="assets/img/logo-iam.png" alt="" width="360" height="178">
+    <div class="pc-info__rule"><svg class="pc-info__spark"><use href="#i-sparkle"/></svg></div>
+    <p class="pc-info__date"><span class="pc-info__date-num">2026.12.20</span><span class="pc-info__date-day">SUN</span></p>
+    <p class="pc-info__time">17:30 OPEN / 18:00 START</p>
+    <p class="pc-info__venue">PLUSWIN HALL OSAKA</p>
+    <img class="pc-info__thp" src="assets/img/logo-thp.png" alt="" width="280" height="76">
+  </div>
+</aside>
+<!-- 右：ページ内ナビ＋CTA＋SNS -->
+<aside class="pc-side pc-side--right">
+  <div class="pc-side__inner">
+    <nav aria-label="サイドメニュー">
+      <ol class="pc-nav">
+        <li><a href="#message"><span class="pc-nav__num">02</span>MESSAGE</a></li>
+        <li><a href="#information"><span class="pc-nav__num">03</span>INFORMATION</a></li>
+        <li><a href="#ticket"><span class="pc-nav__num">04</span>TICKET</a></li>
+        <li><a href="#profile"><span class="pc-nav__num">05</span>PROFILE</a></li>
+        <li><a href="#access"><span class="pc-nav__num">06</span>ACCESS</a></li>
+        <li><a href="#faq"><span class="pc-nav__num">07</span>NOTICE / FAQ</a></li>
+        <li><a href="#share"><span class="pc-nav__num">08</span>SHARE</a></li>
+      </ol>
+    </nav>
+    <a class="btn-cta btn-cta--52 pc-side__cta" href="#ticket">チケット購入はこちら</a>
+    <ul class="sns sns--center pc-side__sns">
+      <li><a class="sns__btn" href="https://x.com/noco53_official" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a></li>
+      <li><a class="sns__btn" href="https://www.instagram.com/noco53_official/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a></li>
+      <li><a class="sns__btn" href="https://www.tiktok.com/@noco53_official" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a></li>
+      <li><a class="sns__btn" href="https://www.youtube.com/@noco53_official" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a></li>
+    </ul>
+    <p class="pc-side__tag">#NOCO_Iam</p>
+  </div>
+</aside>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="assets/js/main.js" defer></script>

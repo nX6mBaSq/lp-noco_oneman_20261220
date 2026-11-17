@@ -89,6 +89,23 @@
     reveals.forEach((el) => io.observe(el));
   }
 
+  /* ---------- PC：右パネルのナビで表示中のセクションを強調 ---------- */
+  const pcLinks = $$('.pc-nav a');
+  if (pcLinks.length && 'IntersectionObserver' in window) {
+    const byId = new Map(pcLinks.map((a) => [a.getAttribute('href').slice(1), a]));
+    const visible = new Set();
+    const update = () => {
+      // 表示中のうち最も上にあるセクションを現在地とする
+      const current = [...byId.keys()].find((id) => visible.has(id));
+      pcLinks.forEach((a) => a.classList.toggle('is-current', a === byId.get(current)));
+    };
+    const navIo = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id)));
+      update();
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    byId.forEach((_, id) => { const sec = document.getElementById(id); if (sec) navIo.observe(sec); });
+  }
+
   /* ---------- 07 FAQ アコーディオン ---------- */
   $$('.faq__q').forEach((btn) => {
     btn.addEventListener('click', () => {
