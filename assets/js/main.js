@@ -114,40 +114,12 @@
   });
 
   /* ---------- スクロール連動の表示演出 ---------- */
-  // パーツの役割ごとに動きを変える（見た目は style.css の [data-reveal] を参照）
-  //   head    … 見出し：タイトルを左からワイプ → サブ → 炎ハート
-  //   rule    … 区切り線：左から伸びる（山場の有刺鉄線〈INFORMATION / TICKET〉のみ。
-  //              細いラインは毎セクション動くと騒がしいので静止表示）
-  //   stagger … リスト類：子要素を順にずらして表示
-  //   fade    … 本文・カード・画像：下からふわっと表示（MESSAGE の画像も同じ）
-  const revealTypes = {
-    head: '.sec-head',
-    rule: '.grad-rule--wire',
-    stagger: '.info__list, .ticket__buy, .sns, .faq__list, .share__btns',
-    fade: '.info__date, .sub-label, .tcard, .ticket__note, .profile__photo, .profile__text, .mv, .access__info, .map, .share__tag',
-  };
-  Object.entries(revealTypes).forEach(([type, sel]) => {
-    $$(sel, $('main')).forEach((el) => {
-      if (el.dataset.reveal) return;
-      el.dataset.reveal = type;
-      if (type === 'stagger') Array.from(el.children).forEach((child, i) => child.style.setProperty('--i', i));
-    });
-  });
-
+  // MESSAGE の画像（index.html で data-reveal を付与）だけ、下からふわっと表示する。
+  // それ以外のセクションは演出なしで最初から表示（見出しの炎ハートは style.css で常に揺れる）
   const reveals = $$('main [data-reveal]');
   if (reduceMotion || !('IntersectionObserver' in window)) {
     reveals.forEach((el) => el.classList.add('is-lit'));
   } else {
-    // fade は表示し終えたら data-reveal を外し、要素本来のトランジション（タップ時の反応など）に戻す
-    reveals.filter((el) => el.dataset.reveal === 'fade').forEach((el) => {
-      const done = (e) => {
-        if (e.target !== el || e.propertyName !== 'transform') return;
-        el.removeEventListener('transitionend', done);
-        el.removeAttribute('data-reveal');
-        el.classList.remove('is-lit');
-      };
-      el.addEventListener('transitionend', done);
-    });
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
@@ -155,6 +127,7 @@
         io.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px -12% 0px' });
+    // ローディングの裏で演出を消化しないよう、ローディングが閉じてから監視を始める
     loaderClosed.then(() => reveals.forEach((el) => io.observe(el)));
   }
 
