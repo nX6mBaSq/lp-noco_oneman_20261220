@@ -97,8 +97,27 @@
     requestAnimationFrame(() => scrollToHash(a.getAttribute('href')));
   });
 
-  /* ---------- 02 MESSAGE：ブロックを順にフェードイン ---------- */
-  const reveals = $$('#message [data-reveal]');
+  /* ---------- スクロール連動の表示演出 ---------- */
+  // パーツの役割ごとに動きを変える（見た目は style.css の [data-reveal] を参照）
+  //   head    … 見出し：タイトルを左からワイプ → サブ → 炎ハート
+  //   rule    … 区切り線：左から伸びる
+  //   stagger … リスト類：子要素を順にずらして表示
+  //   fade    … 本文・カード・画像：下からふわっと表示（MESSAGE の画像も同じ）
+  const revealTypes = {
+    head: '.sec-head',
+    rule: '.grad-rule',
+    stagger: '.info__list, .ticket__buy, .sns, .faq__list, .share__btns',
+    fade: '.info__date, .sub-label, .tcard, .ticket__note, .profile__photo, .profile__text, .mv, .access__info, .map, .share__tag',
+  };
+  Object.entries(revealTypes).forEach(([type, sel]) => {
+    $$(sel, $('main')).forEach((el) => {
+      if (el.dataset.reveal) return;
+      el.dataset.reveal = type;
+      if (type === 'stagger') Array.from(el.children).forEach((child, i) => child.style.setProperty('--i', i));
+    });
+  });
+
+  const reveals = $$('main [data-reveal]');
   if (reduceMotion || !('IntersectionObserver' in window)) {
     reveals.forEach((el) => el.classList.add('is-lit'));
   } else {

@@ -194,6 +194,22 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .btn-cta--52 { height: 52px; width: 100%; font-size: 14px; letter-spacing: .06em; }
 .btn-cta .arrow { font-family: var(--f-jp); font-weight: 700; font-size: 18px; margin-left: 4px; line-height: 1; }
 
+/* ---------- シャイン：VIP カードに斜めのハイライトが数秒おきに横切る ----------
+   ::after に幅 300% の帯グラデーションを敷き、background-position を動かして流す。
+   （切り欠き形状を clip-path で保つため、transform ではなく位置で動かす）
+   ※購入ボタン類は騒がしくなるため対象外 */
+.tcard--vip::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 38%, rgba(255, 134, 189, .16) 50%, transparent 62%) 100% 0 / 300% 100% no-repeat;
+  /* 右上・左下の切り欠きに沿わせる */
+  clip-path: polygon(0 0, calc(100% - var(--c)) 0, 100% var(--c), 100% 100%, var(--c) 100%, 0 calc(100% - var(--c)));
+  animation: shine 4.5s 1.2s cubic-bezier(.45, 0, .25, 1) infinite;
+}
+@keyframes shine {
+  0%       { background-position: 100% 0; }
+  25%, 100% { background-position: 0 0; }
+}
+
 /* =========================================================
    H. 固定ヘッダー
    ========================================================= */
@@ -454,9 +470,56 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   margin-bottom: -10.49%;
 }
 
-/* スクロール連動のフェードイン（JS有効時のみ） */
-.js .message [data-reveal] { transition: opacity .7s ease, transform .7s ease; }
-.js .message [data-reveal]:not(.is-lit) { opacity: 0; transform: translateY(14px); }
+/* =========================================================
+   スクロール連動の表示演出（JS有効時のみ。種類の振り分けは main.js）
+   ========================================================= */
+:root {
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-wipe: cubic-bezier(.65, 0, .35, 1);
+}
+/* fade：本文・カード・画像 */
+.js [data-reveal=""], .js [data-reveal="fade"] { transition: opacity .8s var(--ease-out), transform .8s var(--ease-out); }
+.js [data-reveal=""]:not(.is-lit), .js [data-reveal="fade"]:not(.is-lit) { opacity: 0; transform: translateY(16px); }
+
+/* head：タイトルを左からワイプ → サブ → 炎ハート */
+.js [data-reveal="head"] .sec-head__title {
+  clip-path: inset(-.25em -.25em -.25em 0);
+  transition: clip-path .9s var(--ease-wipe);
+}
+.js [data-reveal="head"]:not(.is-lit) .sec-head__title { clip-path: inset(-.25em 100% -.25em 0); }
+.js [data-reveal="head"] .sec-head__sub { transition: opacity .7s var(--ease-out) .3s, transform .7s var(--ease-out) .3s; }
+.js [data-reveal="head"]:not(.is-lit) .sec-head__sub { opacity: 0; transform: translateY(8px); }
+/* 炎ハート：見出しのあと「ポンッ」と弾んで登場 → その後はゆらゆら揺れながら灯り続ける。
+   登場・揺れとも transform を使うため、transition ではなく animation を連結する
+   （揺れは登場が終わる 1.25s 後から開始） */
+.js [data-reveal="head"]:not(.is-lit) .sec-head__spark { opacity: 0; }
+.js [data-reveal="head"].is-lit .sec-head__spark {
+  transform-origin: 50% 80%;
+  animation:
+    spark-pop .7s cubic-bezier(.34, 1.56, .64, 1) .55s both,
+    spark-sway 3.2s ease-in-out 1.25s infinite;
+}
+@keyframes spark-pop {
+  from { opacity: 0; transform: translateY(-50%) scale(.3) rotate(-25deg); }
+  to   { opacity: 1; transform: translateY(-50%) scale(1) rotate(0); }
+}
+@keyframes spark-sway {
+  0%, 100% { transform: translateY(-50%) scale(1) rotate(0); filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(240, 40, 127, .95)); }
+  25%      { transform: translateY(-50%) scale(1.05) rotate(-7deg); }
+  50%      { transform: translateY(-50%) scale(1) rotate(0); filter: brightness(0) invert(1) drop-shadow(0 0 9px rgba(240, 40, 127, 1)); }
+  75%      { transform: translateY(-50%) scale(1.05) rotate(7deg); }
+}
+
+/* rule：区切り線が左から伸びる（ローディングのバーと同じ動き） */
+.js [data-reveal="rule"] { transform-origin: left; transition: transform 1.1s var(--ease-out) .25s; }
+.js [data-reveal="rule"]:not(.is-lit) { transform: scaleX(0); }
+
+/* stagger：リストの子要素を 0.08 秒ずつずらして表示 */
+.js [data-reveal="stagger"] > * {
+  transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+.js [data-reveal="stagger"]:not(.is-lit) > * { opacity: 0; transform: translateY(14px); }
 
 /* =========================================================
    03. INFORMATION
