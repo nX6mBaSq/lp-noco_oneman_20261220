@@ -504,19 +504,31 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .js [data-reveal="head"]:not(.is-lit) .sec-head__title { clip-path: inset(-.25em 100% -.25em 0); }
 .js [data-reveal="head"] .sec-head__sub { transition: opacity .7s var(--ease-out) .3s, transform .7s var(--ease-out) .3s; }
 .js [data-reveal="head"]:not(.is-lit) .sec-head__sub { opacity: 0; transform: translateY(8px); }
-/* 炎ハート：見出しのあと「ポンッ」と弾んで登場 → その後はゆらゆら揺れながら灯り続ける。
+/* 炎ハート：見出しのあと、ぼかし＋小さめの状態から「ふわっ」と灯るように登場
+   → その後はゆらゆら揺れながら灯り続ける。
+   オーバーシュート（弾み）を使わず、拡大・ぼかし解除・グローの立ち上がりを
+   緩やかな減速カーブで同時に進めて、急に現れる印象をなくす。
    登場・揺れとも transform を使うため、transition ではなく animation を連結する
-   （揺れは登場が終わる 1.25s 後から開始） */
+   （揺れは登場が終わる 1.8s 後から開始。登場の終点＝揺れの始点なので継ぎ目なし） */
 .js [data-reveal="head"]:not(.is-lit) .sec-head__spark { opacity: 0; }
 .js [data-reveal="head"].is-lit .sec-head__spark {
   transform-origin: 50% 80%;
   animation:
-    spark-pop .7s cubic-bezier(.34, 1.56, .64, 1) .55s both,
-    spark-sway 3.2s ease-in-out 1.25s infinite;
+    spark-in 1.3s cubic-bezier(.33, 1, .68, 1) .5s both,
+    spark-sway 3.2s ease-in-out 1.8s infinite;
 }
-@keyframes spark-pop {
-  from { opacity: 0; transform: translateY(-50%) scale(.3) rotate(-25deg); }
-  to   { opacity: 1; transform: translateY(-50%) scale(1) rotate(0); }
+@keyframes spark-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) translateY(6px) scale(.72) rotate(-8deg);
+    filter: brightness(0) invert(1) drop-shadow(0 0 0 rgba(240, 40, 127, 0)) blur(4px);
+  }
+  45% { opacity: .85; }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) translateY(0) scale(1) rotate(0);
+    filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(240, 40, 127, .95)) blur(0);
+  }
 }
 @keyframes spark-sway {
   0%, 100% { transform: translateY(-50%) scale(1) rotate(0); filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(240, 40, 127, .95)); }
