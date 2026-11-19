@@ -56,7 +56,7 @@
   --sp-7: 48px;
   --sp-8: 64px;
   /* 役割ごとの間隔 */
-  --space-sec: var(--sp-8);        /* セクション上下 */
+  --space-sec: var(--sp-7);        /* セクション上下48px：隣接セクション間は96px */
   --space-head: var(--sp-5);       /* 見出しライン → 本文 */
   --space-group: var(--sp-6);      /* ブロック → 次の小見出し */
   --space-label: var(--sp-3);      /* 小見出し → 中身 */
@@ -383,19 +383,31 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   font: 400 clamp(16px, 4.58cqi, 22px)/1.2 var(--f-display);
   letter-spacing: .05em;
 }
-.kv__cta {
+.kv__prices {
+  display: flex; flex-wrap: wrap; gap: 4px 20px;
+  margin-top: 3.3cqi;
+  font-size: 14px; line-height: 1.6;
+}
+.kv__prices > span { white-space: nowrap; }
+.kv__prices strong { margin-left: 4px; font-size: 17px; font-weight: 700; }
+.kv__price-note { margin-top: 3px; color: #d0b9c4; font-size: 12px; line-height: 1.7; }
+.kv__cta, .btn-cta--ticket {
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-columns: 1fr 15%;
   align-items: center;
-  min-height: max(44px, 11.875cqi);
-  margin-top: 3.3cqi;
+  min-height: 44px;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  gap: 0;
   color: var(--bg-kv);
   font-size: clamp(13px, 3.33cqi, 16px);
   font-weight: 900;
 }
-.kv__cta::before {
+.kv__cta { min-height: max(44px, 11.875cqi); margin-top: 3.3cqi; }
+.kv__cta::before, .btn-cta--ticket::before {
   content: "";
   position: absolute; inset: 0; z-index: -1;
   background:
@@ -404,6 +416,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
 }
 .kv__cta > span:first-child { padding-left: 4.2cqi; }
+.btn-cta--ticket > span:first-child { padding-inline: 12px; text-align: center; }
+.btn-cta--ticket:active, .btn-cta--ticket.is-pressed { background: none; box-shadow: none; }
+.btn-cta--ticket:active::before, .btn-cta--ticket.is-pressed::before { filter: brightness(.85); }
 .kv__cta-stub {
   display: grid; place-items: center;
   align-self: stretch; margin-block: 8px;
@@ -453,7 +468,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    02. MESSAGE
    ========================================================= */
 .message {
-  /* 上下とも他セクションと同じ 64px（セクション間のリズムを統一） */
+  /* 外側の余白は共通の48px。画像内の文章・署名の間隔は維持する */
   padding: var(--space-sec) 0;
   overflow: hidden; isolation: isolate;
 }
@@ -461,7 +476,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .message .sec-head, .message .grad-rule { margin-inline: var(--gutter); }
 /* メッセージ画像（MESSAGE-final.png 1125×1305 透過PNG、@3x書き出し） */
 /* 画像内の透明余白（上 96px／下 118px ＝ 幅比 8.53%／10.49%）を % マージンで相殺し、
-   画像内の「MESSAGE」ラベルがセクション上端（padding 64px）の位置に来るよう調整。
+   画像内の「MESSAGE」ラベルがセクション上端（共通の padding）の位置に来るよう調整。
    ※ margin の % は親の幅基準＝画像幅と一致するので、画面幅が変わっても比率が保たれる */
 .message__img {
   display: block; width: 100%; height: auto;
@@ -671,6 +686,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   background: rgba(236, 92, 156, .35);
 }
 .ticket__label--type { margin-top: var(--space-head); }
+.info__price-note { display: block; margin-top: 4px; font-size: 12px; font-weight: 400; letter-spacing: .02em; color: var(--muted); }
+.tcard__bonus-note { display: block; margin-top: 2px; font-size: 14px; font-weight: 400; color: var(--muted); }
+.ticket__buy-guide { margin-top: 12px; font-size: 14px; line-height: 1.8; color: var(--muted); }
 .ticket__note { margin-top: var(--sp-3); font-size: var(--fs-note); line-height: var(--lh-body); color: var(--muted); }
 .ticket__label--buy { margin-top: var(--space-group); }
 .ticket__buy { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--space-label); }
@@ -680,7 +698,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   border-radius: 12px;
   font-weight: 900;
 }
-.btn-buy.btn-cta { justify-content: flex-start; }
+.btn-buy.btn-cta {
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(240, 40, 127, .16);
+}
+.btn-buy.btn-cta:active, .btn-buy.btn-cta.is-pressed { box-shadow: inset 0 0 0 2px #fff; }
 .btn-buy__logo {
   flex: none; display: grid; place-items: center;
   width: 32px; height: 32px; border-radius: 8px; background: #fff;
