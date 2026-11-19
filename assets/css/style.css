@@ -352,13 +352,19 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   pointer-events: none;
 }
 .kv__visual { position: relative; aspect-ratio: 480 / 601; }
-.kv__eyebrow, .kv__thp { position: absolute; top: 5%; }
+.kv__eyebrow, .kv__thp { position: absolute; }
 .kv__eyebrow {
+  top: 14%;
   left: 7.5%;
-  font: 600 clamp(11px, 2.9cqi, 14px)/1 var(--f-cond);
-  letter-spacing: .15em;
+  width: 42%;
+  font: 400 14cqi/.98 var(--f-display);
+  letter-spacing: .015em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .45);
 }
-.kv__thp { right: 7.5%; width: 10.6%; height: auto; }
+.kv__eyebrow > span { display: block; }
+.kv__oneman { margin-top: 1.4cqi; font-size: 7.6cqi; letter-spacing: .035em; }
+.kv__live { margin-top: 1cqi; font-size: 12cqi; letter-spacing: .04em; }
+.kv__thp { top: 5%; right: 7.5%; width: 10.6%; height: auto; }
 .kv__title { position: absolute; inset: auto 6.5% 1% auto; width: 87%; }
 .kv__title img { width: 100%; height: auto; }
 .kv__info {
