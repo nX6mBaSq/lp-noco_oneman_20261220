@@ -7,6 +7,29 @@
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
+  /* ---------- ローディング ---------- */
+  // 演出（約1.8秒）とページ読み込みの両方が済んだら閉じる。読み込みが遅くても最長4秒で閉じる
+  const loader = $('#loader');
+  if (loader && root.classList.contains('is-loading')) {
+    const MIN = 1800, MAX = 4000;
+    const start = performance.now();
+    let closed = false;
+    const close = () => {
+      if (closed) return;
+      closed = true;
+      loader.classList.add('is-leaving');
+      root.classList.remove('is-loading');
+      try { sessionStorage.setItem('noco-loaded', '1'); } catch (_) {}
+      setTimeout(() => loader.remove(), 600);
+    };
+    const onLoad = () => setTimeout(close, Math.max(0, MIN - (performance.now() - start)));
+    if (document.readyState === 'complete') onLoad();
+    else window.addEventListener('load', onLoad, { once: true });
+    setTimeout(close, MAX);
+  } else if (loader) {
+    loader.remove();
+  }
+
   // iOS Safari で :active（CTA押下状態）を有効にする
   document.addEventListener('touchstart', () => {}, { passive: true });
 
