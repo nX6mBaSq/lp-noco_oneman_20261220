@@ -135,7 +135,9 @@ html.is-loading .loader,
   position: fixed; inset: 0; z-index: 1000;
   background: radial-gradient(ellipse at 50% 50%, #1a0a14 0%, var(--bg) 70%);
 }
-.loader.is-leaving { opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s .5s; }
+/* 退場：ロゴが少し浮き上がりながら全体が溶けるように消える（減速カーブで余韻を残す） */
+.loader.is-leaving { opacity: 0; visibility: hidden; transition: opacity .6s cubic-bezier(.4, 0, .2, 1), visibility 0s .6s; }
+.loader.is-leaving .loader__inner { transform: translateY(-6px) scale(1.02); transition: transform .6s cubic-bezier(.22, 1, .36, 1); }
 .loader__inner { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--sp-5); }
 .loader__logo {
   width: 180px; height: auto;
@@ -177,7 +179,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   border: 0;
   border-radius: var(--r-pill);
   box-shadow: var(--glow), inset 0 0 0 2px transparent;
-  transition: filter .15s, box-shadow .15s, transform .15s;
+  transition: filter .2s ease-out, box-shadow .2s ease-out, transform .2s cubic-bezier(.22, 1, .36, 1);
   touch-action: manipulation;
   user-select: none;
 }
@@ -246,15 +248,18 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .menu-btn__bar {
   position: absolute; right: 0; height: 1.5px; background: currentColor;
-  transition: transform .25s, width .25s;
+  transition: transform .35s cubic-bezier(.65, 0, .35, 1), width .35s cubic-bezier(.65, 0, .35, 1);
 }
+/* 縦線は visibility で瞬時に消えていたため、フェードで消す */
+.menu-btn::before { transition: opacity .2s ease-out; }
 .menu-btn__bar:nth-child(1) { top: 17px; width: 21px; }
 .menu-btn__bar:nth-child(2) { top: 26px; width: 15px; }
-.is-menu-open .menu-btn::before { visibility: hidden; }
+.is-menu-open .menu-btn::before { opacity: 0; }
 .is-menu-open .menu-btn__bar:nth-child(1) { transform: translateY(4.5px) rotate(45deg); }
 .is-menu-open .menu-btn__bar:nth-child(2) { transform: translateY(-4.5px) rotate(-45deg); width: 21px; }
 .is-menu-open .header { background: transparent; border-bottom-color: transparent; }
-.is-menu-open .header__ticket { visibility: hidden; }
+.header__ticket { transition: opacity .2s ease-out, visibility 0s; }
+.is-menu-open .header__ticket { opacity: 0; visibility: hidden; transition: opacity .2s ease-out, visibility 0s .2s; }
 
 /* =========================================================
    状態B：メニュー
@@ -274,8 +279,18 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   overscroll-behavior: contain;
 }
 .menu[hidden] { display: none; }
-.menu.is-entering { animation: menu-in .22s ease-out; }
+/* 開く：背景がフェード → タイル・CTA が少しずつ下から浮かぶ
+   閉じる：瞬時に消えていたため、短いフェードアウトを挟んでから非表示にする（main.js） */
+.menu.is-entering { animation: menu-in .32s cubic-bezier(.22, 1, .36, 1); }
+.menu.is-entering .menu__list > li,
+.menu.is-entering .menu__bottom {
+  animation: menu-item-in .5s cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(60ms + var(--i, 0) * 40ms);
+}
+.menu.is-leaving { animation: menu-out .22s cubic-bezier(.4, 0, 1, 1) forwards; }
 @keyframes menu-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes menu-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes menu-item-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .menu__nav, .menu__bottom { position: relative; }
 /* ナビ＋CTA/SNS をひとまとまりで上下中央に（auto マージンなので収まらない端末ではスクロール可） */
 .menu__nav { margin-top: auto; }
@@ -288,7 +303,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   background: var(--surface);
   font-family: var(--f-cond); font-weight: 500; font-size: 17px; letter-spacing: .08em; line-height: 1.2;
   color: #fff;
-  transition: border-color .2s, color .2s;
+  transition: border-color .25s ease-out, color .25s ease-out;
 }
 .menu__num { font-size: var(--fs-cap); line-height: 1; color: var(--pink); letter-spacing: .04em; }
 .menu__item--wide { grid-column: 1 / -1; }
@@ -313,7 +328,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   width: 44px; height: 44px; border-radius: 50%;
   border: 1px solid rgba(240, 40, 127, .35);
   background: var(--surface);
-  transition: background-color .15s;
+  transition: background-color .25s ease-out;
 }
 .sns__btn i { font-size: 19px; line-height: 1; }
 .sns__btn:active { background: var(--magenta); }
@@ -796,9 +811,14 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .faq__mark { width: 16px; flex: none; font-size: 15px; color: var(--pink); line-height: 1; text-align: center; }
 .faq__qtext { flex: 1; font-size: var(--fs-body); font-weight: 700; letter-spacing: .05em; line-height: var(--lh-ui); }
-.faq__icon { width: 16px; flex: none; margin-right: 2px; font-size: 14px; line-height: 1; text-align: center; color: #fff; }
-.faq__icon .fa-minus, .faq__q[aria-expanded="true"] .faq__icon .fa-plus { display: none; }
-.faq__q[aria-expanded="true"] .faq__icon .fa-minus { display: inline-block; }
+/* ＋／− は同じ位置に重ね、回転しながら入れ替える（表示切替だと瞬時に変わるため） */
+.faq__icon { display: grid; place-items: center; width: 16px; flex: none; margin-right: 2px; font-size: 14px; line-height: 1; color: #fff; }
+.faq__icon i { grid-area: 1 / 1; transition: opacity .3s ease-out, transform .4s cubic-bezier(.22, 1, .36, 1); }
+.faq__icon .fa-minus { opacity: 0; transform: rotate(-90deg); }
+.faq__q[aria-expanded="true"] .faq__icon .fa-plus { opacity: 0; transform: rotate(90deg); }
+.faq__q[aria-expanded="true"] .faq__icon .fa-minus { opacity: 1; transform: none; }
+/* 開閉の高さアニメーションは main.js（Web Animations API）で行う */
+.faq__a { overflow: hidden; }
 .faq__a { padding: 0 0 var(--sp-5) 28px; font-size: var(--fs-note); line-height: var(--lh-body); color: var(--muted); }
 
 /* =========================================================
@@ -811,6 +831,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   font-family: var(--f-display); font-size: 34px; line-height: 1.3; color: #f24a96;
   letter-spacing: .01em;
 }
+/* 表示演出が終わると main.js が data-reveal を外すので、このトランジションに戻る */
+.share__tag { transition: opacity .2s ease-out; }
 .share__tag:active { opacity: .7; }
 .share__btns { display: flex; gap: var(--sp-2); margin-top: var(--sp-5); }
 .share__btns li { flex: 1 1 0; min-width: 0; }
@@ -820,7 +842,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   border-radius: var(--r-pill);
   border: 1px solid rgba(214, 120, 180, .3); background: var(--surface);
   font-size: var(--fs-note); font-weight: 900; letter-spacing: .06em;
-  transition: background-color .15s;
+  transition: background-color .25s ease-out;
 }
 .btn-share i { font-size: 11px; margin-left: 3px; }
 .btn-share:active { background: var(--magenta); }
@@ -868,7 +890,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   border: 1px solid rgba(214, 120, 180, .35); border-radius: var(--r-pill);
   background: var(--surface);
   font-family: var(--f-cond); font-weight: 500; font-size: var(--fs-sm); letter-spacing: .12em;
-  transition: background-color .15s;
+  transition: background-color .25s ease-out;
 }
 .footer__top i { font-size: 11px; }
 .footer__top:active { background: var(--magenta); }
@@ -885,8 +907,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   border-radius: var(--r-pill);
   box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
   background: #fff; color: #120c14; font-size: 13px; font-weight: 700;
-  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  opacity: 0; pointer-events: none;
+  /* 消えるときは素早く、出るときは減速しながら浮かび上がる */
+  transition: opacity .25s cubic-bezier(.4, 0, 1, 1), transform .25s cubic-bezier(.4, 0, 1, 1);
 }
+.toast.is-show { transition: opacity .35s cubic-bezier(.22, 1, .36, 1), transform .45s cubic-bezier(.22, 1, .36, 1); }
 .toast.is-show { opacity: 1; transform: translate(-50%, 0); }
 
 /* =========================================================
@@ -951,16 +976,22 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     display: flex; align-items: center; min-height: 48px;
     font-family: var(--f-cond); font-weight: 500; font-size: 15px; letter-spacing: .1em; line-height: 1.2;
     color: #fff;
-    transition: color .2s, padding-left .2s;
+    /* padding の変化はレイアウト再計算で引っかかるため、文字の移動は transform で行う */
+    transition: color .3s ease-out;
   }
+  .pc-nav__num, .pc-nav__label { transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
   .pc-nav__num { width: 32px; flex: none; font-size: var(--fs-cap); color: var(--pink); letter-spacing: .04em; }
-  /* 表示中のセクション：ピンク＋右にハート */
-  .pc-nav a.is-current { color: #ff86bd; padding-left: 6px; }
-  .pc-nav a.is-current::after {
+  /* 表示中のセクション：ピンク＋右にハート（ハートは常に置いておき、フェードで出し入れ） */
+  .pc-nav a::after {
     content: "\f004"; margin-left: auto;
     font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 10px; color: var(--pink);
+    opacity: 0; transform: scale(.6);
+    transition: opacity .3s ease-out, transform .4s cubic-bezier(.22, 1, .36, 1);
   }
-  .pc-nav a:hover { color: #ff86bd; padding-left: 6px; }
+  .pc-nav a.is-current::after { opacity: 1; transform: none; }
+  .pc-nav a.is-current, .pc-nav a:hover { color: #ff86bd; }
+  .pc-nav a.is-current :is(.pc-nav__num, .pc-nav__label),
+  .pc-nav a:hover :is(.pc-nav__num, .pc-nav__label) { transform: translateX(6px); }
   .pc-side__cta { margin-top: var(--sp-6); }
   .pc-side__sns { margin-top: var(--sp-5); }
   .pc-side__sns .sns__btn:hover { background: var(--magenta); }
@@ -974,6 +1005,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
   /* マウス操作向けのホバー（共通ボタン） */
   .sns__btn:hover, .btn-share:hover, .footer__top:hover { background: var(--magenta); }
+  .footer__list a, .access__site { transition: color .25s ease-out; }
 }
 
 @media (prefers-reduced-motion: reduce) {
